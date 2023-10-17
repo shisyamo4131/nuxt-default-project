@@ -1,6 +1,17 @@
 import colors from 'vuetify/es5/util/colors'
 
+// Uncomment if you want to use per-page permission settings.
+// import { pagePermissions } from './plugins/pagePermissions.js'
+
+// Loads an env file for the specified environment.
+const environment = process.env.NODE_ENV || 'dev'
+const envSettings = require(`./.env.${environment}.js`)
+
 export default {
+  // This is a setting added to use env.
+  env: {
+    NODE_ENV: process.env.NODE_ENV,
+  },
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
 
@@ -24,7 +35,12 @@ export default {
   css: [],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [],
+  plugins: [
+    './plugins/air-vuetify.js',
+    './plugins/dayjs.js',
+    './plugins/firebase.js',
+    './plugins/firebase.auth.js',
+  ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -79,4 +95,42 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
+
+  // Uncomment if you want to use per-page permission settings.
+  // router: {
+  //   middleware: ['authenticated'],
+  //   /* extends route to add meta. */
+  //   extendRoutes(routes) {
+  //     routes.forEach((route) => {
+  //       const meta = pagePermissions[route.name] || []
+  //       route.meta = {
+  //         requiredPermissions: meta,
+  //       }
+  //     })
+  //   },
+  // },
+
+  // Set parameters to connect firebase from .env.
+  publicRuntimeConfig: {
+    apiKey: envSettings.apiKey,
+    authDomain: envSettings.authDomain,
+    databaseURL: envSettings.databaseURL,
+    projectId: envSettings.projectId,
+    storageBucket: envSettings.storageBucket,
+    messagingSenderId: envSettings.messagingSenderId,
+    appId: envSettings.appId,
+    vapidKey: envSettings.vapidKey,
+  },
+
+  // For transition.
+  transition: {
+    name: 'slide-x-transition',
+    mode: 'out-in',
+    duration: 300,
+  },
+  layoutTransition: {
+    name: 'slide-x-transition',
+    mode: 'out-in',
+    duration: 300,
+  },
 }

@@ -88,3 +88,15 @@ sw.*
 
 # Vim swap files
 *.swp
+
+# Exclude because it includes connection settings to firebase.
+.env*
+
+# The directory where emulator data is stored.
+# If you want to save the data in a different directory, change it.
+saved-data/
+
+# Exclude it because it is a firebase configuration file.
+.firebase
+.firebaserc
+.secret*

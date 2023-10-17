@@ -10,6 +10,7 @@ Please note that this is a personal project.
 
 ## Pre-Installed packages
 
+- air-vuetify
 - axios-jsonp
 - cross-env
 - dayjs
@@ -17,9 +18,26 @@ Please note that this is a personal project.
 
 ## Build Setup
 
+1. Create separate settings for each environment (.env.local, .env.dev, .env.prod) to connect to the various firebase services.
+
+```js
+module.exports = {
+  apiKey: 'XXXXXXXXXX',
+  authDomain: 'projectId.firebaseapp.com',
+  databaseURL: 'https://projectId-default-rtdb.firebaseio.com',
+  projectId: 'projectId',
+  storageBucket: 'projectId.appspot.com',
+  messagingSenderId: '999999999999',
+  appId: 'XXXXXXXXXX',
+  vapidKey: 'XXXXX',
+}
+```
+
 ```bash
 # install dependencies
 $ npm install
+
+# create .env(3 file)
 
 # serve with hot reload at localhost:3000
 $ npm run dev
