@@ -7,7 +7,8 @@
  * The hasMany field can be defined to be undeletable if there is
  * dependent data with the defined conditions.
  *
- * { collection, field, condition }
+ * { collection, field, condition, type }
+ * type is 'collection' or 'subcollection'.
  *
  * Firestore query condition expressions can be used for condition.
  *
@@ -29,6 +30,7 @@
 
 import {
   collection,
+  collectionGroup,
   deleteDoc,
   doc,
   getDoc,
@@ -67,7 +69,7 @@ export default class FireModel {
     Object.defineProperties(this, {
       tokenMap: {
         // enumerable: true,
-        enumerable: !!this.#tokenFields.length,
+        enumerable: true,
         get() {
           if (!this.#tokenFields.length) return null
           const arr = []
@@ -103,6 +105,28 @@ export default class FireModel {
   }
 
   set hasMany(v) {
+    if (!Array.isArray(v)) {
+      throw new TypeError(
+        `[FireModel.js] The hasMany property must be an array.`
+      )
+    }
+    for (const item of v) {
+      const { collection: colName, field, condition, type } = item
+      if (!colName || !field || !condition || !type) {
+        // eslint-disable-next-line
+        console.error(item)
+        throw new Error(
+          `[FireModel.js] The hasMany property is incorrectly set. It requires collection, field, condition and type.`
+        )
+      }
+      if (!['==', 'array-contains'].includes(condition)) {
+        // eslint-disable-next-line
+        console.error(item)
+        throw new Error(
+          `[FireModel.js] The hasMany property is incorrectly set. The only possible values for the condition property are '==' and 'array-contains'.`
+        )
+      }
+    }
     this.#hasMany = v
   }
 
@@ -481,7 +505,10 @@ export default class FireModel {
    */
   async #hasChild() {
     for (const item of this.#hasMany) {
-      const colRef = collection(this.#firestore, item.collection)
+      const colRef =
+        item.type === 'collection'
+          ? collection(this.#firestore, item.collection)
+          : collectionGroup(this.#firestore, item.collection)
       const whrObj = where(item.field, item.condition, this.docId)
       const q = query(colRef, whrObj, limit(1))
       const snapshot = await getDocs(q)
@@ -496,6 +523,6 @@ export default class FireModel {
    */
   sendConsole({ message, params = [], type = 'info' }) {
     // eslint-disable-next-line
-    console[type](`[FireModel] ${message}`, ...params)
+    console[type](`[FireModel.js] ${message}`, ...params)
   }
 }
