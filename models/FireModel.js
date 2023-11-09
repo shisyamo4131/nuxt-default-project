@@ -492,6 +492,7 @@ export default class FireModel {
           'A document was successfully deleted in the %s collection with document id %s.',
         params: [this.#collection, docRef.id],
       })
+      return docRef
     } catch (err) {
       this.sendConsole({ message: err.message, type: 'error' })
       throw err
